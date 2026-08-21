@@ -1,5 +1,6 @@
 name: Research TOPIX-17 robustness
 
+# Validation branch trigger: no production logic change.
 on:
   push:
     branches: [main]
@@ -29,6 +30,30 @@ jobs:
       - run: |
           pip install -r requirements.txt
           pip install tabulate
+      - name: Inspect official NEXT FUNDS 1629 historical CSV
+        run: |
+          python - <<'PY'
+          import requests
+          u='https://www.nomura-am.co.jp/fund/etf/history/ETF_1629.csv'
+          r=requests.get(u,timeout=60,headers={'User-Agent':'tse-sector-rotation-research/1.0'})
+          print('status',r.status_code,'content-type',r.headers.get('content-type'),'encoding',r.encoding)
+          r.raise_for_status()
+          text=r.content.decode('shift_jis',errors='replace')
+          print('\n'.join(text.splitlines()[:12]))
+          PY
+      - name: Diagnose 1629 adjusted-price discontinuities
+        run: |
+          python - <<'PY'
+          import pandas as pd
+          import yfinance as yf
+          x = yf.download('1629.T', start='2008-03-25', auto_adjust=True, progress=False, threads=False, timeout=60)
+          s = x['Close']
+          if isinstance(s, pd.DataFrame): s = s.iloc[:,0]
+          s = s.dropna().sort_index()
+          r0 = s.pct_change(fill_method=None)
+          print('RAW TOP MOVES')
+          print(pd.DataFrame({'close':s,'ret':r0}).reindex(r0.abs().nlargest(12).index).sort_index().to_string())
+          PY
       - name: Run robustness grid
         run: python research_backtest.py --out-dir research
       - name: Upload research outputs
