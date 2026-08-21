@@ -1,3 +1,4 @@
+# price-core validation trigger
 name: Backtest TSE sector rotation
 
 on:
