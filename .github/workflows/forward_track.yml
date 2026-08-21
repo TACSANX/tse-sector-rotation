@@ -11,6 +11,12 @@ on:
       - forward_track.py
       - config/frozen_model_v1.json
       - .github/workflows/forward_track.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - forward_track.py
+      - config/frozen_model_v1.json
+      - .github/workflows/forward_track.yml
 
 permissions:
   contents: write
@@ -40,6 +46,7 @@ jobs:
         run: python forward_track.py
 
       - name: Commit prospective outputs
+        if: github.event_name != 'pull_request'
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
