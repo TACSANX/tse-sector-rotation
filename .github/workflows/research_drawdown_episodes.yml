@@ -1,0 +1,47 @@
+name: Research TOPIX-17 drawdown episodes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - research_drawdown_episodes.py
+      - research_broad_core_attribution.py
+      - research_broad_core.py
+      - research_portfolio.py
+      - research_dual_momentum.py
+      - research_backtest_official.py
+      - .github/workflows/research_drawdown_episodes.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - research_drawdown_episodes.py
+      - research_broad_core_attribution.py
+      - research_broad_core.py
+      - research_portfolio.py
+      - research_dual_momentum.py
+      - research_backtest_official.py
+      - .github/workflows/research_drawdown_episodes.yml
+  workflow_dispatch:
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: |
+          pip install -r requirements.txt
+          pip install tabulate
+      - name: Run Phase-19 drawdown-episode study
+        run: python research_drawdown_episodes.py --out-dir research_drawdown_episodes
+      - name: Upload outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: topix17-drawdown-episodes-research
+          path: research_drawdown_episodes/
+          if-no-files-found: warn
