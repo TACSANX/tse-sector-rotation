@@ -1,4 +1,4 @@
-name: Daily TOPIX-17 screen
+name: Daily TSE 33-sector screen
 
 on:
   workflow_dispatch:
@@ -10,13 +10,13 @@ permissions:
   contents: write
 
 concurrency:
-  group: topix17-daily-screen
+  group: tse-33-daily-screen
   cancel-in-progress: false
 
 jobs:
   screen:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - name: Checkout
@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run sector screener
+      - name: Run 33-industry screener
         run: python screener.py
 
       - name: Update README ranking
@@ -42,10 +42,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- README.md data/latest.csv data/history.csv data/macro.json
+          git add -- README.md data/industry_latest.csv data/etf_latest.csv data/industry_history.csv data/etf_history.csv data/macro.json
           if git diff --cached --quiet; then
             echo "No data changes."
             exit 0
           fi
-          git commit -m "chore: update TOPIX-17 ranking $(TZ=Asia/Tokyo date +%F)"
+          git commit -m "chore: update TSE 33-sector ranking $(TZ=Asia/Tokyo date +%F)"
           git push
