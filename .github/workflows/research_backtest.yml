@@ -1,0 +1,47 @@
+name: Research TOPIX-17 robustness
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - research_backtest.py
+      - .github/workflows/research_backtest.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: |
+          pip install -r requirements.txt
+          pip install tabulate
+      - name: Run robustness grid
+        run: python research_backtest.py --out-dir research
+      - name: Upload research outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: topix17-robustness-research
+          path: research/
+          if-no-files-found: warn
+      - name: Commit research outputs
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- research/REPORT.md research/metadata.json research/grid_results.csv research/shortlist.csv research/monthly_10bp_equity.csv
+          if git diff --cached --quiet; then
+            echo 'No research changes.'
+            exit 0
+          fi
+          git commit -m 'research: record TOPIX-17 robustness results'
+          git push
