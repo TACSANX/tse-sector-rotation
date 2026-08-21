@@ -5,6 +5,15 @@ on:
   schedule:
     - cron: "30 18 * * 1-5"
       timezone: "Asia/Tokyo"
+  pull_request:
+    branches: [main]
+    paths:
+      - screener.py
+      - config/industry_constituents.csv
+      - config/fundamentals.csv
+      - scripts/update_readme.py
+      - requirements.txt
+      - .github/workflows/screen.yml
 
 permissions:
   contents: write
@@ -38,6 +47,7 @@ jobs:
         run: python scripts/update_readme.py
 
       - name: Commit changed outputs
+        if: github.event_name != 'pull_request'
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
