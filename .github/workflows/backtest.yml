@@ -8,6 +8,12 @@ on:
     paths:
       - backtest.py
       - .github/workflows/backtest.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - backtest.py
+      - .github/workflows/backtest.yml
   workflow_dispatch:
 
 permissions:
@@ -36,7 +42,16 @@ jobs:
       - name: Run backtest
         run: python backtest.py --download-start 2008-03-25 --signal-start 2012-01-01 --cost-bps 10
 
+      - name: Upload backtest outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sector-rotation-backtest
+          path: backtest/
+          if-no-files-found: warn
+
       - name: Commit backtest outputs
+        if: github.event_name != 'pull_request'
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
