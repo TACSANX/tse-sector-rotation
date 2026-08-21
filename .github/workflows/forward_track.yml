@@ -1,0 +1,53 @@
+name: Prospective frozen-model tracker
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 23 * * 1-5"
+      timezone: "Asia/Tokyo"
+  push:
+    branches: [main]
+    paths:
+      - forward_track.py
+      - config/frozen_model_v1.json
+      - .github/workflows/forward_track.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: prospective-frozen-model-tracker
+  cancel-in-progress: false
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Update prospective audit log
+        run: python forward_track.py
+
+      - name: Commit prospective outputs
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- forward/signals.csv forward/performance.csv forward/status.json
+          if git diff --cached --quiet; then
+            echo "No prospective output changes."
+            exit 0
+          fi
+          git commit -m "research: update prospective model audit $(TZ=Asia/Tokyo date +%F)"
+          git push
