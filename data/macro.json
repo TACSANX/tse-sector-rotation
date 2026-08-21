@@ -1,0 +1,46 @@
+{
+  "asof": "2026-08-21",
+  "macro": {
+    "rates": 0.0,
+    "growth": 0.0,
+    "inflation": 0.0,
+    "oil": 0.0,
+    "usdjpy": 0.0,
+    "risk_off": 0.0,
+    "regime": "Mixed / transition"
+  },
+  "market": {
+    "ret_1m": 0.00904120490343363,
+    "ret_3m": 0.04812768039084103,
+    "ret_6m": 0.08577702477020743,
+    "ma50_gap": 0.010542650311462731,
+    "ma200_gap": 0.11030217754486471,
+    "breadth_50d": 0.6470588235294118,
+    "breadth_200d": 0.8235294117647058,
+    "breadth_positive_3m": 0.6470588235294118,
+    "risk_on_score": 69.32247848311665,
+    "cash_score": 30.677521516883345
+  },
+  "industry_weights": {
+    "technical": 0.25287356321839083,
+    "rotation": 0.25287356321839083,
+    "macro": 0.25287356321839083,
+    "fundamental": 0.0,
+    "risk": 0.09195402298850575,
+    "absolute": 0.14942528735632185
+  },
+  "fundamentals_active": false,
+  "allocation_decision": {
+    "code": "1626",
+    "name": "情報通信・サービスその他",
+    "signal": "BUY",
+    "score": 74.361,
+    "is_cash": false
+  },
+  "method": {
+    "industry_series": "independent equal/config-weight proxy baskets; not official JPX index values",
+    "etf_universe": "17 TOPIX-17 ETFs + CASH",
+    "etf_final_score": "60% relative/underlying composite + 40% absolute trend - penalties",
+    "cash_rule": "market absolute trend + ETF breadth + macro risk-off + weak-top-ETF boost"
+  }
+}
