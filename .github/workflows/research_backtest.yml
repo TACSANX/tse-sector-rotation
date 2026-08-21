@@ -30,6 +30,32 @@ jobs:
       - run: |
           pip install -r requirements.txt
           pip install tabulate
+      - name: Diagnose 1629 adjusted-price discontinuities
+        run: |
+          python - <<'PY'
+          import pandas as pd
+          import yfinance as yf
+          x = yf.download('1629.T', start='2008-03-25', auto_adjust=True, progress=False, threads=False, timeout=60)
+          s = x['Close']
+          if isinstance(s, pd.DataFrame): s = s.iloc[:,0]
+          s = s.dropna().sort_index()
+          r0 = s.pct_change(fill_method=None)
+          print('RAW TOP MOVES')
+          print(pd.DataFrame({'close':s,'ret':r0}).reindex(r0.abs().nlargest(12).index).sort_index().to_string())
+          repaired = s.copy()
+          d = pd.Timestamp('2026-04-01')
+          pre = repaired.loc[repaired.index < d].iloc[-1]
+          post = repaired.loc[repaired.index >= d].iloc[0]
+          ratio = float(post/pre)
+          print('split boundary', pre, post, ratio)
+          if 350 <= ratio <= 650:
+              repaired.loc[repaired.index < d] *= 500.0
+          elif 1/650 <= ratio <= 1/350:
+              repaired.loc[repaired.index < d] /= 500.0
+          r = repaired.pct_change(fill_method=None)
+          print('REPAIRED TOP MOVES')
+          print(pd.DataFrame({'close':repaired,'ret':r}).reindex(r.abs().nlargest(12).index).sort_index().to_string())
+          PY
       - name: Run robustness grid
         run: python research_backtest.py --out-dir research
       - name: Upload research outputs
