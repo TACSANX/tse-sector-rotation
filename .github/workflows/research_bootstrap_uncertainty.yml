@@ -1,0 +1,60 @@
+name: Research TOPIX-17 bootstrap uncertainty
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - research_bootstrap_uncertainty.py
+      - research_execution_delay.py
+      - research_core_tilt.py
+      - research_portfolio.py
+      - research_dual_momentum.py
+      - research_backtest_official.py
+      - .github/workflows/research_bootstrap_uncertainty.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - research_bootstrap_uncertainty.py
+      - research_execution_delay.py
+      - research_core_tilt.py
+      - research_portfolio.py
+      - research_dual_momentum.py
+      - research_backtest_official.py
+      - .github/workflows/research_bootstrap_uncertainty.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: |
+          pip install -r requirements.txt
+          pip install tabulate
+      - name: Run Phase-7 bootstrap study
+        run: python research_bootstrap_uncertainty.py --out-dir research_bootstrap --reps 5000
+      - name: Upload outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: topix17-bootstrap-research
+          path: research_bootstrap/
+          if-no-files-found: warn
+      - name: Commit outputs
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- research_bootstrap/REPORT.md research_bootstrap/metadata.json research_bootstrap/bootstrap_results.csv research_bootstrap/bootstrap_summary.csv
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'research: record bootstrap uncertainty results'
+          git push
