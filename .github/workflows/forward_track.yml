@@ -58,3 +58,5 @@ jobs:
           fi
           git commit -m "research: update prospective model audit $(TZ=Asia/Tokyo date +%F)"
           git push
+
+# validation trigger
