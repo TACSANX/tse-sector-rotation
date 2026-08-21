@@ -6,6 +6,11 @@ on:
     paths:
       - research_backtest.py
       - .github/workflows/research_backtest.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - research_backtest.py
+      - .github/workflows/research_backtest.yml
   workflow_dispatch:
 
 permissions:
@@ -34,6 +39,7 @@ jobs:
           path: research/
           if-no-files-found: warn
       - name: Commit research outputs
+        if: github.event_name != 'pull_request'
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
