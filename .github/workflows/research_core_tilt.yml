@@ -1,0 +1,56 @@
+name: Research TOPIX-17 core tilt
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - research_core_tilt.py
+      - research_portfolio.py
+      - research_dual_momentum.py
+      - research_backtest_official.py
+      - .github/workflows/research_core_tilt.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - research_core_tilt.py
+      - research_portfolio.py
+      - research_dual_momentum.py
+      - research_backtest_official.py
+      - .github/workflows/research_core_tilt.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: |
+          pip install -r requirements.txt
+          pip install tabulate
+      - name: Run Phase-3 core-plus-tilt study
+        run: python research_core_tilt.py --out-dir research_core_tilt
+      - name: Upload outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: topix17-core-tilt-research
+          path: research_core_tilt/
+          if-no-files-found: warn
+      - name: Commit outputs
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- research_core_tilt/REPORT.md research_core_tilt/metadata.json research_core_tilt/grid_results.csv research_core_tilt/shortlist_10bp.csv research_core_tilt/core_share_neighborhood_10bp.csv research_core_tilt/equity_10bp.csv
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'research: record core plus tilt results'
+          git push
