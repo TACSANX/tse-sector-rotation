@@ -1,0 +1,69 @@
+{
+  "model_id": "topix17_1306_core_tilt_v1",
+  "version": "1.0.0",
+  "frozen_at_jst": "2026-08-21T16:54:00+09:00",
+  "freeze_date": "2026-08-21",
+  "status": "prospective_tracking",
+  "research_intent": "Preserve broad TOPIX participation while using a small sector-momentum overlay and absolute-trend gating to improve drawdown and risk-adjusted return. Historical alpha versus 1306 is not treated as proven.",
+  "data": {
+    "provider": "Nomura Asset Management",
+    "series": "official NEXT FUNDS distribution-reinvested NAV per share",
+    "topix17_tickers": [
+      "1617.T", "1618.T", "1619.T", "1620.T", "1621.T", "1622.T", "1623.T", "1624.T", "1625.T",
+      "1626.T", "1627.T", "1628.T", "1629.T", "1630.T", "1631.T", "1632.T", "1633.T"
+    ],
+    "broad_core_ticker": "1306.T"
+  },
+  "portfolio": {
+    "core_ticker": "1306.T",
+    "core_weight": 0.75,
+    "tilt_budget": 0.25,
+    "top_k": 3,
+    "tilt_slot_weight_within_tilt": 0.3333333333333333,
+    "failed_slot_policy": "CASH",
+    "backfill_failed_slots": false,
+    "leverage": false
+  },
+  "relative_momentum": {
+    "model_name": "classic_6_12minus1",
+    "formula": "0.35 * cross_sectional_z(relative_6m) + 0.65 * cross_sectional_z(relative_12_to_1m)",
+    "relative_benchmark": "equal-weight synthetic return of the 17 TOPIX-17 official NAV series",
+    "lookback_6m_observations": 126,
+    "lookback_12m_observations": 252,
+    "skip_recent_observations_for_12_to_1m": 21
+  },
+  "absolute_filter": {
+    "moving_average_observations": 200,
+    "require_price_above_moving_average": true,
+    "absolute_return_observations": 252,
+    "require_absolute_return_positive": true
+  },
+  "rebalance": {
+    "frequency": "monthly",
+    "signal_date_rule": "last official NAV observation of a completed calendar month",
+    "execution_date_rule": "first official NAV observation strictly after the signal date",
+    "returns_begin": "after the execution NAV close",
+    "first_eligible_signal_month": "2026-08"
+  },
+  "research_cost_assumption": {
+    "basis_points_per_risky_side": 10.0
+  },
+  "primary_comparators": [
+    "100pct_1306",
+    "75pct_1306_plus_25pct_sector_ew_no_cash",
+    "cashmatched_same_cash_sector_ew"
+  ],
+  "historical_reference": {
+    "phase17_candidate_cagr": 0.1184,
+    "phase17_candidate_max_drawdown": -0.3081,
+    "phase17_candidate_sharpe": 0.7046,
+    "phase17_100pct_1306_cagr": 0.1178,
+    "phase17_100pct_1306_max_drawdown": -0.3233,
+    "phase17_100pct_1306_sharpe": 0.6881,
+    "note": "Historical results were used to select this model and are not a pristine confirmatory test. Prospective results after the freeze date are the primary evidence going forward."
+  },
+  "change_control": {
+    "rule": "Do not edit parameters in this model ID. Any parameter, universe, data-source, signal, gate, rebalance, or portfolio-weight change must create a new model_id/version and preserve this file unchanged.",
+    "shadow_models_may_not_replace_primary_without_new_version": true
+  }
+}
