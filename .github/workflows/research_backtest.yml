@@ -30,6 +30,17 @@ jobs:
       - run: |
           pip install -r requirements.txt
           pip install tabulate
+      - name: Inspect official NEXT FUNDS 1629 historical CSV
+        run: |
+          python - <<'PY'
+          import requests
+          u='https://www.nomura-am.co.jp/fund/etf/history/ETF_1629.csv'
+          r=requests.get(u,timeout=60,headers={'User-Agent':'tse-sector-rotation-research/1.0'})
+          print('status',r.status_code,'content-type',r.headers.get('content-type'),'encoding',r.encoding)
+          r.raise_for_status()
+          text=r.content.decode('shift_jis',errors='replace')
+          print('\n'.join(text.splitlines()[:12]))
+          PY
       - name: Diagnose 1629 adjusted-price discontinuities
         run: |
           python - <<'PY'
@@ -42,19 +53,6 @@ jobs:
           r0 = s.pct_change(fill_method=None)
           print('RAW TOP MOVES')
           print(pd.DataFrame({'close':s,'ret':r0}).reindex(r0.abs().nlargest(12).index).sort_index().to_string())
-          repaired = s.copy()
-          d = pd.Timestamp('2026-04-01')
-          pre = repaired.loc[repaired.index < d].iloc[-1]
-          post = repaired.loc[repaired.index >= d].iloc[0]
-          ratio = float(post/pre)
-          print('split boundary', pre, post, ratio)
-          if 350 <= ratio <= 650:
-              repaired.loc[repaired.index < d] *= 500.0
-          elif 1/650 <= ratio <= 1/350:
-              repaired.loc[repaired.index < d] /= 500.0
-          r = repaired.pct_change(fill_method=None)
-          print('REPAIRED TOP MOVES')
-          print(pd.DataFrame({'close':repaired,'ret':r}).reindex(r.abs().nlargest(12).index).sort_index().to_string())
           PY
       - name: Run robustness grid
         run: python research_backtest.py --out-dir research
