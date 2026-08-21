@@ -5,6 +5,13 @@ on:
     branches: [main]
     paths:
       - backtest_etf_only.py
+      - backtest_etf_only_safe.py
+      - .github/workflows/backtest_etf_only.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - backtest_etf_only.py
+      - backtest_etf_only_safe.py
       - .github/workflows/backtest_etf_only.yml
   workflow_dispatch:
 
@@ -23,10 +30,18 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt
       - name: Monthly backtest
-        run: python backtest_etf_only.py --rebalance monthly --cost-bps 10 --out-dir backtest_etf_only/monthly
+        run: python backtest_etf_only_safe.py --rebalance monthly --cost-bps 10 --out-dir backtest_etf_only/monthly
       - name: Weekly backtest
-        run: python backtest_etf_only.py --rebalance weekly --cost-bps 10 --out-dir backtest_etf_only/weekly
+        run: python backtest_etf_only_safe.py --rebalance weekly --cost-bps 10 --out-dir backtest_etf_only/weekly
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: topix17-etf-core-backtests
+          path: backtest_etf_only/
+          if-no-files-found: warn
       - name: Commit results
+        if: github.event_name != 'pull_request'
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
