@@ -1,5 +1,6 @@
 name: Research TOPIX-17 self-financing
 
+# Optimized validation trigger only.
 on:
   push:
     branches: [main]
