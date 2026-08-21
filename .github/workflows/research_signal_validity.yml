@@ -29,7 +29,7 @@ jobs:
           cache: pip
       - run: |
           pip install -r requirements.txt
-          pip install tabulate
+          pip install tabulate scipy
       - name: Run Phase-12 cross-sectional signal test
         run: python research_signal_validity.py --out-dir research_signal_validity --bootstrap-reps 5000
       - name: Upload outputs
@@ -39,4 +39,4 @@ jobs:
           name: topix17-signal-validity-research
           path: research_signal_validity/
           if-no-files-found: warn
-# validation trigger
+# validation trigger 2
