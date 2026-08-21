@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "period_start": "2009-04-06",
+    "period_end": "2026-08-21",
+    "rebalance": "weekly",
+    "cost_bps_per_side": 10.0,
+    "cash_signal_share": 0.15104740904079383,
+    "signals": 907
+  },
+  "summary": [
+    {
+      "strategy": "TOPIX-17 + CASH",
+      "total_return": -0.29074391271459,
+      "cagr": -0.019578491043792834,
+      "volatility": 0.2538362858496988,
+      "sharpe": 0.04800461319451288,
+      "sortino": 0.057451644616959355,
+      "max_drawdown": -0.6582717006135046,
+      "calmar": -0.029742264517137556,
+      "cash_exposure": 0.15182755388940955,
+      "switches": 346
+    },
+    {
+      "strategy": "TOPIX-17 always invested",
+      "total_return": -0.007283238664012481,
+      "cagr": -0.00042063915610568436,
+      "volatility": 0.26890505431625605,
+      "sharpe": 0.13376589972453726,
+      "sortino": 0.17497143628232234,
+      "max_drawdown": -0.6325290225306233,
+      "calmar": -0.0006650116297000736,
+      "cash_exposure": 0.0,
+      "switches": 360
+    },
+    {
+      "strategy": "TOPIX 1306 buy&hold",
+      "total_return": -0.25565292821966423,
+      "cagr": -0.016849697071113723,
+      "volatility": 2.3323880219756523,
+      "sharpe": 0.2531219638730642,
+      "sortino": 1.2290134936592576,
+      "max_drawdown": -0.9639897988252004,
+      "calmar": -0.017479123836837474,
+      "cash_exposure": 0.0,
+      "switches": 0
+    }
+  ]
+}
