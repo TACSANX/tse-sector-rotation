@@ -1,5 +1,6 @@
 name: Research TOPIX-17 dual momentum
 
+# Validation trigger only.
 on:
   push:
     branches: [main]
