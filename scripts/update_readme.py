@@ -24,40 +24,56 @@ def num(v, digits=1) -> str:
         return "-"
 
 
-def build_block(latest_path: Path, macro_path: Path) -> str:
-    df = pd.read_csv(latest_path, index_col=0)
-    macro = json.loads(macro_path.read_text(encoding="utf-8"))
+def build_block(industry_path: Path, etf_path: Path, macro_path: Path) -> str:
+    ind = pd.read_csv(industry_path, index_col=0)
+    etf = pd.read_csv(etf_path, index_col=0)
+    meta = json.loads(macro_path.read_text(encoding="utf-8"))
     rows = [
-        f"**データ基準日:** {macro.get('asof', '-')}",
-        f"**マクロ・レジーム:** {macro.get('macro', {}).get('regime', '-')}",
-        f"**ファンダメンタル層:** {'有効' if macro.get('fundamentals_active') else '未入力のため重みを他因子へ再配分'}",
+        f"**データ基準日:** {meta.get('asof', '-')}",
+        f"**マクロ・レジーム:** {meta.get('macro', {}).get('regime', '-')}",
+        f"**ファンダメンタル層:** {'有効' if meta.get('fundamentals_active') else '未入力のため重みを他因子へ再配分'}",
         "",
-        "| Rank | Code | Sector | Score | Signal | 1M | 3M | Rotation | Macro | RSI |",
-        "|---:|---:|---|---:|---|---:|---:|---:|---:|---:|",
+        "### 東証33業種ローテーション（代理指数）",
+        "",
+        "| Rank | Industry | Score | Signal | 1M | 3M RS | Breadth 200D | ETF | Purity |",
+        "|---:|---|---:|---|---:|---:|---:|---:|---:|",
     ]
-    for ticker, row in df.iterrows():
-        code = str(ticker).replace(".T", "")
+    for industry, row in ind.head(15).iterrows():
         rows.append(
-            f"| {int(row['rank'])} | {code} | {row['sector']} | "
-            f"{num(row['final_score'])} | {row['signal']} | "
-            f"{pct(row['ret_1m'])} | {pct(row['ret_3m'])} | "
-            f"{num(row['rotation_score'])} | {num(row['macro_score'])} | {num(row['rsi14'])} |"
+            f"| {int(row['rank'])} | {industry} | {num(row['final_score'])} | {row['signal']} | "
+            f"{pct(row['ret_1m'])} | {pct(row['rs_3m'])} | {pct(row['breadth_200d'])} | "
+            f"{str(row['execution_etf_code'])} | {num(row['execution_purity'], 0)} |"
+        )
+    rows += [
+        "",
+        "### 売買候補ETFランキング",
+        "",
+        "| Rank | Code | ETF group | Score | Signal | Underlying | Purity | 1M | 3M |",
+        "|---:|---:|---|---:|---|---:|---:|---:|---:|",
+    ]
+    for _, row in etf.head(12).iterrows():
+        rows.append(
+            f"| {int(row['rank'])} | {row['code']} | {row['etf_group']} | {num(row['final_score'])} | "
+            f"{row['signal']} | {num(row['underlying_score'])} | {num(row['purity_score'], 0)} | "
+            f"{pct(row['ret_1m'])} | {pct(row['ret_3m'])} |"
         )
     return "\n".join(rows)
 
 
 def main() -> None:
     readme = Path("README.md")
-    latest = Path("data/latest.csv")
+    industry = Path("data/industry_latest.csv")
+    etf = Path("data/etf_latest.csv")
     macro = Path("data/macro.json")
-    if not (readme.exists() and latest.exists() and macro.exists()):
+    if not all(p.exists() for p in (readme, industry, etf, macro)):
         return
     text = readme.read_text(encoding="utf-8")
     if START not in text or END not in text:
         raise RuntimeError("README ranking markers are missing")
     before, rest = text.split(START, 1)
     _, after = rest.split(END, 1)
-    readme.write_text(before + START + "\n" + build_block(latest, macro) + "\n" + END + after, encoding="utf-8")
+    block = build_block(industry, etf, macro)
+    readme.write_text(before + START + "\n" + block + "\n" + END + after, encoding="utf-8")
 
 
 if __name__ == "__main__":
