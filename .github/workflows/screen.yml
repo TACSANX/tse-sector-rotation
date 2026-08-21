@@ -59,3 +59,5 @@ jobs:
           fi
           git commit -m "chore: update TSE 33-sector ranking $(TZ=Asia/Tokyo date +%F)"
           git push
+
+# validation trigger
