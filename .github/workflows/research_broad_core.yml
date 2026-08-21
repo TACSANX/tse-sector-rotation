@@ -1,0 +1,45 @@
+name: Research TOPIX-17 broad core
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - research_broad_core.py
+      - research_core_tilt.py
+      - research_portfolio.py
+      - research_dual_momentum.py
+      - research_backtest_official.py
+      - .github/workflows/research_broad_core.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - research_broad_core.py
+      - research_core_tilt.py
+      - research_portfolio.py
+      - research_dual_momentum.py
+      - research_backtest_official.py
+      - .github/workflows/research_broad_core.yml
+  workflow_dispatch:
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: |
+          pip install -r requirements.txt
+          pip install tabulate
+      - name: Run Phase-16 broad-core substitution study
+        run: python research_broad_core.py --out-dir research_broad_core
+      - name: Upload outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: topix17-broad-core-research
+          path: research_broad_core/
+          if-no-files-found: warn
