@@ -1,0 +1,45 @@
+name: Research TOPIX-17 label permutation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - research_label_permutation.py
+      - research_core_tilt.py
+      - research_portfolio.py
+      - research_dual_momentum.py
+      - research_backtest_official.py
+      - .github/workflows/research_label_permutation.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - research_label_permutation.py
+      - research_core_tilt.py
+      - research_portfolio.py
+      - research_dual_momentum.py
+      - research_backtest_official.py
+      - .github/workflows/research_label_permutation.yml
+  workflow_dispatch:
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: |
+          pip install -r requirements.txt
+          pip install tabulate
+      - name: Run Phase-13 fixed-label permutation study
+        run: python research_label_permutation.py --out-dir research_label_permutation --reps 2000
+      - name: Upload outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: topix17-label-permutation-research
+          path: research_label_permutation/
+          if-no-files-found: warn
