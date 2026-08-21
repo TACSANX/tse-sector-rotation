@@ -1,5 +1,6 @@
 name: Research TOPIX-17 timing sensitivity
 
+# Validation branch touch: no production logic change.
 on:
   push:
     branches: [main]
