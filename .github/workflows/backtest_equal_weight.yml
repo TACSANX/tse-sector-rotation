@@ -1,0 +1,29 @@
+name: Backtest ETF rotation vs equal weight
+on:
+  push:
+    branches: [main]
+    paths: [backtest_etf_equal_weight.py, .github/workflows/backtest_equal_weight.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python backtest_etf_equal_weight.py --rebalance monthly --cost-bps 10 --out-dir backtest_equal_weight/monthly
+      - run: python backtest_etf_equal_weight.py --rebalance weekly --cost-bps 10 --out-dir backtest_equal_weight/weekly
+      - name: Commit results
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- backtest_equal_weight/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'test: record equal-weight benchmark backtests'
+          git push
