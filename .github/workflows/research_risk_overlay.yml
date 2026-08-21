@@ -1,0 +1,58 @@
+name: Research TOPIX-17 risk overlay
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - research_risk_overlay.py
+      - research_core_tilt.py
+      - research_portfolio.py
+      - research_dual_momentum.py
+      - research_backtest_official.py
+      - .github/workflows/research_risk_overlay.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - research_risk_overlay.py
+      - research_core_tilt.py
+      - research_portfolio.py
+      - research_dual_momentum.py
+      - research_backtest_official.py
+      - .github/workflows/research_risk_overlay.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: |
+          pip install -r requirements.txt
+          pip install tabulate
+      - name: Run Phase-4 risk-overlay study
+        run: python research_risk_overlay.py --out-dir research_risk_overlay
+      - name: Upload outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: topix17-risk-overlay-research
+          path: research_risk_overlay/
+          if-no-files-found: warn
+      - name: Commit outputs
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- research_risk_overlay/REPORT.md research_risk_overlay/metadata.json research_risk_overlay/grid_results.csv research_risk_overlay/shortlist_10bp.csv research_risk_overlay/cost_stability.csv research_risk_overlay/equity_10bp.csv
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'research: record risk overlay results'
+          git push
