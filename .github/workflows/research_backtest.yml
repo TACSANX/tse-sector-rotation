@@ -1,5 +1,6 @@
 name: Research TOPIX-17 robustness
 
+# Validation trigger only; production research logic is unchanged.
 on:
   push:
     branches: [main]
