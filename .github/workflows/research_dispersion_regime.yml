@@ -1,0 +1,47 @@
+name: Research TOPIX-17 dispersion regime
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - research_dispersion_regime.py
+      - research_attribution.py
+      - research_core_tilt.py
+      - research_portfolio.py
+      - research_dual_momentum.py
+      - research_backtest_official.py
+      - .github/workflows/research_dispersion_regime.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - research_dispersion_regime.py
+      - research_attribution.py
+      - research_core_tilt.py
+      - research_portfolio.py
+      - research_dual_momentum.py
+      - research_backtest_official.py
+      - .github/workflows/research_dispersion_regime.yml
+  workflow_dispatch:
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: |
+          pip install -r requirements.txt
+          pip install tabulate
+      - name: Run Phase-14 dispersion regime study
+        run: python research_dispersion_regime.py --out-dir research_dispersion_regime
+      - name: Upload outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: topix17-dispersion-regime-research
+          path: research_dispersion_regime/
+          if-no-files-found: warn
