@@ -3,6 +3,7 @@
 
 - Disable yfinance threads to avoid SQLite cache lock on GitHub-hosted runners.
 - Make row-wise idxmax tolerate warm-up rows where every factor is NaN.
+- Use the TOPIX index (^TOPX) rather than ETF 1306 as the historical benchmark.
 """
 from __future__ import annotations
 
@@ -34,6 +35,7 @@ yf.download = serial_download
 pd.DataFrame.idxmax = safe_idxmax
 
 import backtest_etf_only
+backtest_etf_only.BENCHMARK = "^TOPX"
 
 if __name__ == "__main__":
     backtest_etf_only.main()
