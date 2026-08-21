@@ -4,12 +4,12 @@ on:
   push:
     branches: [main]
     paths:
-      - research_backtest.py
+      - research_backtest_official.py
       - .github/workflows/research_backtest.yml
   pull_request:
     branches: [main]
     paths:
-      - research_backtest.py
+      - research_backtest_official.py
       - .github/workflows/research_backtest.yml
   workflow_dispatch:
 
@@ -29,14 +29,14 @@ jobs:
       - run: |
           pip install -r requirements.txt
           pip install tabulate
-      - name: Run robustness grid
-        run: python research_backtest.py --out-dir research
+      - name: Run official-data robustness grid
+        run: python research_backtest_official.py --out-dir research_official
       - name: Upload research outputs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: topix17-robustness-research
-          path: research/
+          name: topix17-official-robustness-research
+          path: research_official/
           if-no-files-found: warn
       - name: Commit research outputs
         if: github.event_name != 'pull_request'
@@ -44,10 +44,10 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- research/REPORT.md research/metadata.json research/grid_results.csv research/shortlist.csv research/monthly_10bp_equity.csv
+          git add -- research_official/REPORT.md research_official/metadata.json research_official/grid_results.csv research_official/shortlist.csv research_official/monthly_10bp_equity.csv
           if git diff --cached --quiet; then
             echo 'No research changes.'
             exit 0
           fi
-          git commit -m 'research: record TOPIX-17 robustness results'
+          git commit -m 'research: record official TOPIX-17 robustness results'
           git push
