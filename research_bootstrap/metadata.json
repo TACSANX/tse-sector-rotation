@@ -1,0 +1,160 @@
+{
+  "phase": 7,
+  "data_source": "Nomura Asset Management official NEXT FUNDS historical CSV",
+  "series": "distribution-reinvested NAV per share",
+  "reps": 5000,
+  "block_months": [
+    6,
+    12,
+    24
+  ],
+  "candidates": [
+    "core50",
+    "core75"
+  ],
+  "execution_delays": [
+    0,
+    1
+  ],
+  "cost_bps": 10.0,
+  "complete_month_end": "2026-07-31",
+  "selection_adjusted": false,
+  "source_metadata": [
+    {
+      "ticker": "1617.T",
+      "url": "https://www.nomura-am.co.jp/fund/etf/history/ETF_1617.csv",
+      "rows": 4517,
+      "start": "2008-03-21",
+      "end": "2026-08-20",
+      "max_abs_daily_return": 0.11368340480045225
+    },
+    {
+      "ticker": "1618.T",
+      "url": "https://www.nomura-am.co.jp/fund/etf/history/ETF_1618.csv",
+      "rows": 4517,
+      "start": "2008-03-21",
+      "end": "2026-08-20",
+      "max_abs_daily_return": 0.13808894979444775
+    },
+    {
+      "ticker": "1619.T",
+      "url": "https://www.nomura-am.co.jp/fund/etf/history/ETF_1619.csv",
+      "rows": 4517,
+      "start": "2008-03-21",
+      "end": "2026-08-20",
+      "max_abs_daily_return": 0.14835692012470303
+    },
+    {
+      "ticker": "1620.T",
+      "url": "https://www.nomura-am.co.jp/fund/etf/history/ETF_1620.csv",
+      "rows": 4517,
+      "start": "2008-03-21",
+      "end": "2026-08-20",
+      "max_abs_daily_return": 0.1348749295339513
+    },
+    {
+      "ticker": "1621.T",
+      "url": "https://www.nomura-am.co.jp/fund/etf/history/ETF_1621.csv",
+      "rows": 4517,
+      "start": "2008-03-21",
+      "end": "2026-08-20",
+      "max_abs_daily_return": 0.11079077429984685
+    },
+    {
+      "ticker": "1622.T",
+      "url": "https://www.nomura-am.co.jp/fund/etf/history/ETF_1622.csv",
+      "rows": 4517,
+      "start": "2008-03-21",
+      "end": "2026-08-20",
+      "max_abs_daily_return": 0.16040762602057845
+    },
+    {
+      "ticker": "1623.T",
+      "url": "https://www.nomura-am.co.jp/fund/etf/history/ETF_1623.csv",
+      "rows": 4517,
+      "start": "2008-03-21",
+      "end": "2026-08-20",
+      "max_abs_daily_return": 0.19486025093127113
+    },
+    {
+      "ticker": "1624.T",
+      "url": "https://www.nomura-am.co.jp/fund/etf/history/ETF_1624.csv",
+      "rows": 4517,
+      "start": "2008-03-21",
+      "end": "2026-08-20",
+      "max_abs_daily_return": 0.16095065243925988
+    },
+    {
+      "ticker": "1625.T",
+      "url": "https://www.nomura-am.co.jp/fund/etf/history/ETF_1625.csv",
+      "rows": 4517,
+      "start": "2008-03-21",
+      "end": "2026-08-20",
+      "max_abs_daily_return": 0.13922572426154933
+    },
+    {
+      "ticker": "1626.T",
+      "url": "https://www.nomura-am.co.jp/fund/etf/history/ETF_1626.csv",
+      "rows": 4517,
+      "start": "2008-03-21",
+      "end": "2026-08-20",
+      "max_abs_daily_return": 0.10232818453267145
+    },
+    {
+      "ticker": "1627.T",
+      "url": "https://www.nomura-am.co.jp/fund/etf/history/ETF_1627.csv",
+      "rows": 4517,
+      "start": "2008-03-21",
+      "end": "2026-08-20",
+      "max_abs_daily_return": 0.14901360294505284
+    },
+    {
+      "ticker": "1628.T",
+      "url": "https://www.nomura-am.co.jp/fund/etf/history/ETF_1628.csv",
+      "rows": 4517,
+      "start": "2008-03-21",
+      "end": "2026-08-20",
+      "max_abs_daily_return": 0.11843499318906847
+    },
+    {
+      "ticker": "1629.T",
+      "url": "https://www.nomura-am.co.jp/fund/etf/history/ETF_1629.csv",
+      "rows": 4517,
+      "start": "2008-03-21",
+      "end": "2026-08-20",
+      "max_abs_daily_return": 0.15285012013960286
+    },
+    {
+      "ticker": "1630.T",
+      "url": "https://www.nomura-am.co.jp/fund/etf/history/ETF_1630.csv",
+      "rows": 4517,
+      "start": "2008-03-21",
+      "end": "2026-08-20",
+      "max_abs_daily_return": 0.12331250765652846
+    },
+    {
+      "ticker": "1631.T",
+      "url": "https://www.nomura-am.co.jp/fund/etf/history/ETF_1631.csv",
+      "rows": 4517,
+      "start": "2008-03-21",
+      "end": "2026-08-20",
+      "max_abs_daily_return": 0.17299599949275168
+    },
+    {
+      "ticker": "1632.T",
+      "url": "https://www.nomura-am.co.jp/fund/etf/history/ETF_1632.csv",
+      "rows": 4517,
+      "start": "2008-03-21",
+      "end": "2026-08-20",
+      "max_abs_daily_return": 0.16438935623412676
+    },
+    {
+      "ticker": "1633.T",
+      "url": "https://www.nomura-am.co.jp/fund/etf/history/ETF_1633.csv",
+      "rows": 4517,
+      "start": "2008-03-21",
+      "end": "2026-08-20",
+      "max_abs_daily_return": 0.17604040797393172
+    }
+  ]
+}
