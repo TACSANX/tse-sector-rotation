@@ -1,0 +1,58 @@
+name: Research TOPIX-17 execution delay
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - research_execution_delay.py
+      - research_core_tilt.py
+      - research_portfolio.py
+      - research_dual_momentum.py
+      - research_backtest_official.py
+      - .github/workflows/research_execution_delay.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - research_execution_delay.py
+      - research_core_tilt.py
+      - research_portfolio.py
+      - research_dual_momentum.py
+      - research_backtest_official.py
+      - .github/workflows/research_execution_delay.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: |
+          pip install -r requirements.txt
+          pip install tabulate
+      - name: Run Phase-6 execution-delay study
+        run: python research_execution_delay.py --out-dir research_execution_delay
+      - name: Upload outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: topix17-execution-delay-research
+          path: research_execution_delay/
+          if-no-files-found: warn
+      - name: Commit outputs
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- research_execution_delay/REPORT.md research_execution_delay/metadata.json research_execution_delay/grid_results.csv research_execution_delay/delay_robustness_10bp.csv research_execution_delay/equity_10bp.csv
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'research: record execution delay results'
+          git push
