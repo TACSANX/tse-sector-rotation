@@ -1,0 +1,58 @@
+name: Research TOPIX-17 timing sensitivity
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - research_timing_sensitivity.py
+      - research_core_tilt.py
+      - research_portfolio.py
+      - research_dual_momentum.py
+      - research_backtest_official.py
+      - .github/workflows/research_timing_sensitivity.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - research_timing_sensitivity.py
+      - research_core_tilt.py
+      - research_portfolio.py
+      - research_dual_momentum.py
+      - research_backtest_official.py
+      - .github/workflows/research_timing_sensitivity.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: |
+          pip install -r requirements.txt
+          pip install tabulate
+      - name: Run Phase-5 timing-sensitivity study
+        run: python research_timing_sensitivity.py --out-dir research_timing_sensitivity
+      - name: Upload outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: topix17-timing-sensitivity-research
+          path: research_timing_sensitivity/
+          if-no-files-found: warn
+      - name: Commit outputs
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- research_timing_sensitivity/REPORT.md research_timing_sensitivity/metadata.json research_timing_sensitivity/grid_results.csv research_timing_sensitivity/offset_robustness_10bp.csv research_timing_sensitivity/equity_10bp.csv
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'research: record timing sensitivity results'
+          git push
