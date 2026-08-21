@@ -1,0 +1,51 @@
+name: Daily TOPIX-17 screen
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 18 * * 1-5"
+      timezone: "Asia/Tokyo"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: topix17-daily-screen
+  cancel-in-progress: false
+
+jobs:
+  screen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run sector screener
+        run: python screener.py
+
+      - name: Update README ranking
+        run: python scripts/update_readme.py
+
+      - name: Commit changed outputs
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- README.md data/latest.csv data/history.csv data/macro.json
+          if git diff --cached --quiet; then
+            echo "No data changes."
+            exit 0
+          fi
+          git commit -m "chore: update TOPIX-17 ranking $(TZ=Asia/Tokyo date +%F)"
+          git push
