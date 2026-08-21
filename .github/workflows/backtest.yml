@@ -4,15 +4,16 @@ on:
   push:
     branches:
       - main
-      - backtest/2026-08-21
     paths:
       - backtest.py
+      - backtest_price_core.py
       - .github/workflows/backtest.yml
   pull_request:
     branches:
       - main
     paths:
       - backtest.py
+      - backtest_price_core.py
       - .github/workflows/backtest.yml
   workflow_dispatch:
 
@@ -39,8 +40,8 @@ jobs:
           pip install -r requirements.txt
           pip install tabulate
 
-      - name: Run backtest
-        run: python backtest.py --download-start 2008-03-25 --signal-start 2012-01-01 --cost-bps 10
+      - name: Run price-core backtest
+        run: python backtest_price_core.py --download-start 2008-03-25 --signal-start 2012-01-01 --cost-bps 10
 
       - name: Upload backtest outputs
         if: always()
