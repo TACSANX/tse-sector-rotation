@@ -1,6 +1,10 @@
+# validation trigger
 name: Backtest ETF rotation vs equal weight
 on:
   push:
+    branches: [main]
+    paths: [backtest_etf_equal_weight.py, .github/workflows/backtest_equal_weight.yml]
+  pull_request:
     branches: [main]
     paths: [backtest_etf_equal_weight.py, .github/workflows/backtest_equal_weight.yml]
   workflow_dispatch:
@@ -19,7 +23,15 @@ jobs:
       - run: pip install -r requirements.txt
       - run: python backtest_etf_equal_weight.py --rebalance monthly --cost-bps 10 --out-dir backtest_equal_weight/monthly
       - run: python backtest_etf_equal_weight.py --rebalance weekly --cost-bps 10 --out-dir backtest_equal_weight/weekly
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: equal-weight-backtests
+          path: backtest_equal_weight/
+          if-no-files-found: warn
       - name: Commit results
+        if: github.event_name != 'pull_request'
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
